@@ -1,30 +1,32 @@
 <script setup lang="ts">
-import { schemaDataset, type SearchParamsBase } from '@piveau/sdk-core'
-import { defineHubSearch, dcatApDataset, } from '@piveau/sdk-vue'
-import { reactive, ref, toRefs } from 'vue'
+import { SchemaDataset, type SearchParamsBase } from "@piveau/sdk-core";
+import { defineHubSearch, dcatApDataset } from "@piveau/sdk-vue";
+import { reactive, ref, toRefs } from "vue";
 
 // 👇 Your hub-search definition here
 function useDatasetsSearch() {
-  return defineHubSearch({
-    baseUrl: 'https://demo.piveau.io/api/hub/search',
-    index: 'dataset',
-    indexDetails: 'datasets',
-    facets: ['categories', 'publisher', 'catalog', 'format', 'license'],
-    schema: schemaDataset,
-  },
-  dcatApDataset().setup
-)}
+  return defineHubSearch(
+    {
+      baseUrl: "https://demo.piveau.io/api/hub/search",
+      index: "dataset",
+      indexDetails: "datasets",
+      facets: ["categories", "publisher", "catalog", "format", "license"],
+      schema: SchemaDataset,
+    },
+    dcatApDataset().setup
+  );
+}
 
 // 👇 Query parameters
 const queryParams: SearchParamsBase = reactive({
-  q: '',
+  q: "",
   limit: 20,
   page: 1,
-  sort: 'title+asc',
-})
+  sort: "title+asc",
+});
 
 // 👇 Create hub-search asynchronous state
-const { useSearch } = useDatasetsSearch()
+const { useSearch } = useDatasetsSearch();
 const {
   isFetching,
   getSearchResultsEnhanced,
@@ -34,30 +36,34 @@ const {
   getSearchResultsCount,
 } = useSearch({
   // Will refetch whenever one of these change
-  queryParams: toRefs(queryParams)
-})
+  queryParams: toRefs(queryParams),
+});
 
 // 👇 Component-specific datamodels
-const searchInput = ref('')
-const onSearch = () => queryParams.q = searchInput.value
-
-
+const searchInput = ref("");
+const onSearch = () => (queryParams.q = searchInput.value);
 </script>
 
 <template>
   <main class="search-page">
     <div>
-      <input class="search" type="text" v-model="searchInput" @keyup.enter="onSearch" placeholder="Search datasets" />
-      <div v-if="isFetching">
-        Fetching...
-      </div>
+      <input
+        class="search"
+        type="text"
+        v-model="searchInput"
+        @keyup.enter="onSearch"
+        placeholder="Search datasets"
+      />
+      <div v-if="isFetching">Fetching...</div>
       <div v-else>
         Found {{ getSearchResultsCount }} datasets
-        <hr>
+        <hr />
         <ul class="dataset-list">
-          <li v-for="dataset in getSearchResultsEnhanced" :key="dataset.getId">{{ dataset.getTitle }}</li>
+          <li v-for="dataset in getSearchResultsEnhanced" :key="dataset.getId">
+            {{ dataset.getTitle }}
+          </li>
         </ul>
-        <hr>
+        <hr />
       </div>
       <section class="pagination">
         <button @click="previousPage">Decrement page</button>
@@ -69,7 +75,6 @@ const onSearch = () => queryParams.q = searchInput.value
 </template>
 
 <style scoped>
-
 .search-page {
   width: 100%;
 }
@@ -90,7 +95,7 @@ const onSearch = () => queryParams.q = searchInput.value
   margin: 2.5rem 0;
   display: flex;
   flex-direction: column;
-  gap: .5rem;
+  gap: 0.5rem;
 }
 
 .pagination {
